@@ -1,0 +1,203 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据管理-<%=gAppTitle%></title>
+    <link rel="shortcut icon" href="/images/favicon.png">
+    <link rel='stylesheet' href='/stylesheets/bootstrap.min.css' />
+    <link rel="stylesheet" href="/stylesheets/bootstrap-datetimepicker.min.css">
+    <style type="text/css">
+    	div{
+    		/*border:1px solid red;*/
+    	}
+    	.form-group{
+    		margin-bottom:5px;
+    	}
+    </style>
+    <script type="text/javascript">
+    	function check(frm){
+    		if (frm.consumeDate.value=="" || frm.consumeSubject.value=="" ||frm.consumeAmount.value==""){
+    			alert("请填写日期、科目、金额。");
+    			return false;
+    		}
+    		
+    		if(isNaN(frm.consumeAmount.value)){
+    			alert("金额必须为数字。");
+    			return false;
+    		}
+    		
+    		return true;
+    	}
+    </script>
+    <script type="text/javascript">
+    	function goNext10(idx,pagesize,totalcount){
+    		var pos = Math.ceil(idx/10)-1;
+     		var page = (pos+1)*10+1;
+    		if(page>Math.ceil(totalcount/gPageSize))return false;
+     		goPage(page);
+     		return false;
+    	}
+    	
+    	function goPrev10(idx,pagesize,pagesize){
+    		var pos = Math.ceil(idx/10)-1;
+    		var page = (pos-1)*10+1;
+    		if(page<0)return;
+    		goPage(page);
+    		return false;
+   		}
+   		function goPage(idx,curridx,pagesize,totalcount){
+   			if(idx==curridx)return false;
+   			if(isNaN(idx) || idx<=0 || idx>Math.ceil(totalcount/pagesize)) {
+   				alert("指定数值超过边界。");
+   				return false;
+   			}
+   			//alert("跳转"+idx);
+   			$('#pageindex').val(idx);
+   			$('#pageform')[0].submit();
+   			return false;
+   		}
+    </script>
+  </head>
+  <body style="padding-top:5px;padding-bottom:5px;">
+	
+	<div class="container">		
+<% if (user) { %> 
+	
+	<form method="post" action="/record" class="form-horizontal well" role="form" style="margin-bottom:5px;padding:2px;" onsubmit="return check(this);">
+		<input type="hidden" name="_id" id="_id" value="" />
+	<div class="form-group">
+        <label for="consumeDate" class="col-sm-2 control-label">日期：</label>
+        <div class="col-sm-6">
+            <div class="input-group date form_date " data-date="" data-date-format="yyyy-mm-dd" data-link-field="consumeDate" data-link-format="yyyy-mm-dd">
+            <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+			<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+            <input class="form-control" id="consumeDate" name="consumeDate" type="text" size="16" value="" readonly  placeholder="消费日期">
+			</div>
+        </div>
+    </div>
+	<div class="form-group">
+		<label class="control-label col-sm-2" for="consumeSubject">科目：</label>
+		<div class="col-sm-10">
+			<div class="input-group">
+		      <div class="input-group-btn">
+		        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">选择 <span class="caret"></span></button>
+		        <ul class="dropdown-menu">
+		        	<% subjects.forEach(function(item,idx){%>
+		          <li><a href="javascript:void(0);" onclick="$('#consumeSubject').val('<%=item%>');return false;"><%=item%></a></li>
+		          	<%});%>
+		        </ul>
+		      </div><!-- /btn-group -->
+				<input type="text" name="consumeSubject" id="consumeSubject" class="form-control" placeholder="输入消费的大致范围或项目"/>
+			</div>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="control-label col-sm-2" for="consumeAmount">金额：</label>
+		<div class="col-sm-10">
+			<input type="text" name="consumeAmount" id="consumeAmount" class="form-control"  placeholder="消费金额，必须为数字"/>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="control-label col-sm-2" for="consumeRemark">备注：</label>
+		<div class="col-sm-10">
+			<input type="text" name="consumeRemark" id="consumeRemark" class="form-control"  placeholder="备注信息"/>
+		</div>
+	</div>
+
+	<div class="form-group text-center">
+		<button type="button" class="btn btn-default" onclick="window.location.href='/logout'">退出</button>
+		<button type="button" class="btn btn-default" onclick="window.location.href='/list'">查看</button>
+		<button type="submit" class="btn btn-primary">提交</button>
+	</div>
+	</form>
+
+	<form class="navbar-form navbar-right" method="post" id="pageform" action="/search">
+		<!--span>每页记录数：<%=gPageSize%>，当前页：<%=pageindex%>，总记录数：<%=count%></span-->
+		<input type="hidden" name="pageindex" id="pageindex" value="1"/>
+		<input type="hidden" name="keyword" id="keyword" value="<%=keyword%>"/>
+		<div class="btn-group btn-group-sm">
+			<a href="javascript:void(0);" class="btn btn-default" onclick="goPrev10(<%=pageindex%>,<%=gPageSize%>,<%=count%>);">&laquo;</a>
+			<% var start=Math.ceil(pageindex/10-1)*10,i; for (i=start+1; i<=start+10; i++){ if(i>Math.ceil(count/gPageSize))break;%>
+			<a href="javascript:void(0);" class="btn <%=(i==pageindex?'btn-primary':'btn-default')%>" onclick="goPage(this.innerText,<%=pageindex%>,<%=gPageSize%>,<%=count%>);"><%=i%></a>
+			<%}%>
+			<a href="javascript:void(0);" class="btn btn-default" onclick="goNext10(<%=pageindex%>,<%=gPageSize%>,<%=count%>);" >&raquo;</a>
+		</div>
+		<!--div class="form-group" style="width:8em;">
+			<div class="input-group input-group-xs">
+				<input type="text" name="gopage" id="gopage" class="form-control" />
+				<span class="input-group-btn">
+				<button class="btn btn-default" type="button" title="跳转" onclick="goPage($('#gopage').val(),<%=pageindex%>,<%=gPageSize%>,<%=count%>);"><span class="glyphicon glyphicon-send"></span></button>
+				</span>
+			</div>
+		</div-->
+	</form>
+	<table class="table table-striped table-bordered table-condensed" style="margin-bottom:5px;"> 
+		<thead>
+			<tr>
+				<th style="width:7em;">日期</th>
+				<th>科目</th>
+				<th>金额</th>
+				<!--
+				<th>备注</th>
+				-->
+				<th style="width:5em;" class="text-center">操作</th>
+			</tr>	
+		</thead>
+		<tbody>
+		<%
+			consumes.forEach(function(consume, index) { 
+		%> 
+			<tr>
+				<td><%= consume.consumeDate %></td> 
+				<td><%= consume.consumeSubject %></td> 
+				<td><%= consume.consumeAmount %></td> 
+				<!--
+				<td><%= consume.consumeRemark %></td> 
+				-->
+				<td class="text-center">
+				<a href="javascript:void(0);" class="btn btn-warning btn-xs" onclick="$('#_id').val('<%=consume._id%>');$('#consumeAmount').val('<%=consume.consumeAmount%>');$('#consumeDate').val('<%=consume.consumeDate%>');$('#consumeSubject').val('<%=consume.consumeSubject%>');$('#consumeRemark').val('<%=consume.consumeRemark%>');return false;"><span class="glyphicon glyphicon-pencil" title="编辑"></span></a>
+				<a href="/del/<%=consume._id%>" class="btn btn-warning btn-xs" onclick="return confirm('删除后不可恢复，您确定要删除吗？');"><span class="glyphicon glyphicon-remove" title="删除"></span></a>
+				</td> 
+			</tr>
+		<%}) %> 
+		</tbody>
+	</table>
+<% } %> 
+	<!--div class="alert alert-info text-right" style="padding:2px;margin-bottom:2px;">此页面只显示16条最新的记录。</div-->
+	
+	<form method="post" action="/search" class="form-horizontal well" role="form" style="margin-bottom:5px;padding:2px;">
+	<div class=" col-sm-10 col-sm-offset-1"><!--用于确保居中-->
+	    <label for="keyword" class="sr-only">关键字：</label>
+		<div class="form-group">
+			<div class="input-group">
+	        	<input class="form-control" id="keyword" name="keyword" type="text" placeholder="请输入关键字，日期/科目/金额" />
+			      <div class="input-group-btn">
+			    <button type="submit" class="btn btn-info"><span class="glyphicon glyphicon-search"></span></button>
+			      </div><!-- /btn-group -->
+	        </div>
+	    </div>
+    </div>
+	<div class="clearfix" style="font-size:1px; line-height:1px;">&nbsp;</div>
+	</form>
+</div>
+
+
+	<script type="text/javascript" src='/javascripts/jquery-1.11.0.min.js'></script>
+	<script type="text/javascript" src='/javascripts/bootstrap.min.js'></script>
+	<script type="text/javascript" src="/javascripts/bootstrap-datetimepicker.min.js" charset="UTF-8"></script>
+	<script type="text/javascript" src="/javascripts/locales/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+	<script type="text/javascript">
+	$('.form_date').datetimepicker({
+	    language:  'zh-CN',
+	    weekStart: 1,
+	    todayBtn:  1,
+		autoclose: 1,
+		todayHighlight: 1,
+		startView: 2,
+		minView: 2,
+		forceParse: 0
+	});
+	</script>
+
+ </body>
+</html>

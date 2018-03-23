@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册页面-<%=gAppTitle%></title>
+    <link rel="shortcut icon" href="/images/favicon.png">
+    <link rel='stylesheet' href='/stylesheets/bootstrap.min.css' />
+  </head>
+  <body>
+  
+  <div class="col-sm-6 col-sm-offset-3">
+  	<div class="alert alert-info">
+  		欢迎使用<a href="/" class="text-warning"><%=gAppTitle%></a>，输入相关信息注册后，即可使用。
+  		<p class="text-right">by stephen, 2014-3-24</p>
+  	</div>
+  	
+	  <% if(success){%>
+	  	<div class="alert alert-success text-right">
+	  		<small>注册成功，如果浏览器没有跳转，请点击<a href="/login" class="text-danger">登录</a>。</small>
+	  	</div>
+	  <%}%>
+	  <% if(error){%>
+	  	<div class="alert alert-danger text-right">
+	  		<small><%= error%></small>
+	  	</div>
+	  <%}%>
+  
+<form method="post" role="form">
+<div class="form-group">
+	<label for="username">用户名</label>
+	<input type="text" class="form-control" id="username" name="username">
+	<p class="help-block">账户名称，用于登录和显示。</p>
+</div>
+
+<div class="form-group">
+	<label for="password">口令</label>
+	<input type="password" class="form-control" id="password" name="password">
+</div>
+
+<div class="form-group">
+	<label for="password-repeat">重复口令</label>
+		<input type="password" class="form-control" id="password-repeat" name="password-repeat">
+</div>
+
+<div class="form-group">
+	<div class="text-center">
+		<button type="submit" class="btn btn-primary">注册</button>
+	</div>
+</div>
+</form>
+
+</div>
+  <script src='/javascripts/jquery-1.11.0.min.js'></script>
+  <script src='/javascripts/bootstrap.min.js'></script>
+  </body>
+</html>

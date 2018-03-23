@@ -1,0 +1,7 @@
+﻿module.exports={
+	appName:'天天记账v0.0.5',
+	cookieSecret:'accountbywallimn',
+	db:'account',
+	host:'localhost',
+	pageSize:5,
+};

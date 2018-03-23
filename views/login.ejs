@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录页面-<%=gAppTitle%></title>
+    <link rel="shortcut icon" href="/images/favicon.png">
+    <link rel='stylesheet' href='/stylesheets/bootstrap.min.css' />
+  </head>
+  <body>
+<div class="col-sm-6 col-sm-offset-3">
+  
+  	<div class="alert alert-info">
+  		欢迎使用<a href="/" class="text-warning"><%=gAppTitle%></a>，请登录。如果还没有用户，<a href="/reg" class="text-warning">请注册</a>。
+  		<p class="text-right">by <a href="http://wallimn.iteye.com" class="text-danger">wallimn</a>, 2014-3-24</p>
+  	</div>
+
+	<% if (error) { %>
+		<div class="alert alert-danger text-right">
+			<small><%= error %></small>
+		</div>
+	<% } %>
+
+	<form method="post" role="form">
+		<div class="form-group">
+			<label for="username">用户名</label>
+			<input type="text" class="form-control" id="username" name="username">
+		</div>
+		<div class="form-group">
+			<label for="password">密码</label>
+			<input type="password" class="form-control" id="password" name="password">
+		</div>
+		<div class="form-group">
+			<div class="text-center">
+			<button type="submit" class="btn btn-primary">登入</button>
+			</div>
+		</div>
+	</form>
+</div>
+
+
+  <script src='/javascripts/jquery-1.11.0.min.js'></script>
+  <script src='/javascripts/bootstrap.min.js'></script>
+  </body>
+</html>
